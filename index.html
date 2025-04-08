@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Union Bank Loan Calculator & Chatbot</title>
+  <style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+    }
+
+    /* Navbar Styles */
+    .navbar {
+        background-color: #0273c4;
+        overflow: hidden;
+        padding: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .navbar .logo-container {
+        display: flex;
+        align-items: center;
+    }
+
+    .navbar img {
+        margin-right: 15px;
+        width: 50%;
+    }
+
+    .navbar .nav-links {
+        flex-grow: 1;
+        text-align: left;
+    }
+
+    .navbar a {
+        color: white;
+        padding: 14px 20px;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .navbar a:hover {
+        background-color: #575757;
+    }
+
+    /* Sign Up & Login Buttons */
+    .auth-buttons {
+        display: flex;
+        gap: 10px;
+    }
+
+    .auth-buttons button {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .signup {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .signup:hover {
+        background-color: #0056b3;
+    }
+
+    .login {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .login:hover {
+        background-color: #218838;
+    }
+
+    .container {
+        width: 60%;
+        margin: 20px auto;
+        background: white;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+    }
+
+    h3 {
+        text-align: center;
+    }
+
+    input, button {
+        width: 100%;
+        padding: 10px;
+        margin: 5px 0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    button {
+        background-color: #28a745;
+        color: white;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background-color: #218838;
+    }
+
+    .chatbot-container, .loan-container {
+        margin-top: 20px;
+    }
+
+    #chatbot-messages {
+        border: 1px solid #ccc;
+        height: 250px;
+        overflow-y: scroll;
+        padding: 10px;
+        background: #fff;
+        border-radius: 5px;
+    }
+
+    .user-message {
+        background: #d1ecf1;
+        padding: 8px;
+        border-radius: 5px;
+        margin: 5px 0;
+        text-align: right;
+        font-weight: bold;
+    }
+
+    .bot-message {
+        background: #f1f1f1;
+        padding: 8px;
+        border-radius: 5px;
+        margin: 5px 0;
+        text-align: left;
+        font-weight: bold;
+    }
+
+    #loan-result {
+        font-weight: bold;
+        margin-top: 10px;
+        padding: 10px;
+        background: #e9ecef;
+        border-radius: 5px;
+    }
+
+    /* Footer */
+    .footer {
+        text-align: center;
+        padding: 10px;
+        background: #333;
+        color: white;
+        position: fixed;
+        width: 100%;
+        bottom: 0;
+    }
+</style>
+</head>
+<body>
+  <!-- Navbar -->
+  <div class="navbar">
+    <div class="logo-container">
+      <img src="logo.png" alt="Logo" width="200" height="50" />
+    </div>
+    <div class="nav-links">
+      <a href="#">Home</a>
+      <a href="#chatbot">Chatbot</a>
+      <a href="#loan-calculator">Loan Calculator</a>
+    </div>
+    <div class="auth-buttons">
+      <button class="signup">Sign Up</button>
+      <button class="login">Login</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Chatbot Section -->
+    <div class="chatbot-container" id="chatbot">
+      <h3>Chatbot</h3>
+      <div id="chatbot-messages"></div>
+      <input type="text" id="chatbot-input" placeholder="Type a message..." onkeypress="handleKeyPress(event)" />
+      <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <hr />
+
+    <!-- Loan Calculator Section -->
+    <div class="loan-container" id="loan-calculator">
+      <h3>Loan Calculator</h3>
+      <label>Salary:</label>
+      <input type="number" id="salary" placeholder="Enter your salary" />
+      <label>Credit Score:</label>
+      <input type="number" id="credit-score" placeholder="Enter your credit score" />
+      <label>Loan Amount:</label>
+      <input type="number" id="loan-amount" placeholder="Enter loan amount" />
+      <label>Tenure (years):</label>
+      <input type="number" id="tenure" placeholder="Enter tenure in years" />
+      <button onclick="calculateLoan()">Calculate</button>
+      <div id="loan-result"></div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    &copy; 2025 Loan Calculator & Chatbot. All rights reserved.
+  </div>
+
+  <script>
+    const sessionId = "user-session-001"; // Replace with dynamic session management if needed
+
+    window.onload = async function () {
+      const response = await fetch("http://127.0.0.1:5000/welcome");
+      const data = await response.json();
+
+      const messages = document.getElementById("chatbot-messages");
+      const welcomeMessage = document.createElement("div");
+      welcomeMessage.textContent = data.response;
+      welcomeMessage.className = "bot-message";
+      messages.appendChild(welcomeMessage);
+    };
+
+    function handleKeyPress(event) {
+      if (event.key === "Enter") {
+        sendMessage();
+      }
+    }
+
+    async function sendMessage() {
+      const input = document.getElementById("chatbot-input");
+      const messages = document.getElementById("chatbot-messages");
+
+      const userText = input.value.trim();
+      if (userText === "") return;
+
+      // Display user's message
+      const userMessage = document.createElement("div");
+      userMessage.textContent = "You: " + userText;
+      userMessage.className = "user-message";
+      messages.appendChild(userMessage);
+
+      // Send to backend
+      try {
+        const response = await fetch("http://127.0.0.1:5000/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: userText, session_id: sessionId }),
+        });
+
+        const data = await response.json();
+        const botMessage = document.createElement("div");
+        botMessage.className = "bot-message";
+
+        // Check if the response contains HTML content
+        if (data.response.includes("<")) {
+            botMessage.innerHTML = "Bot: " + data.response;
+        } else {
+            botMessage.textContent = "Bot: " + (data.response || "Sorry, I couldn't process your request.");
+        }
+
+        messages.appendChild(botMessage);
+      } catch (error) {
+        const errorMessage = document.createElement("div");
+        errorMessage.textContent = "Bot: Sorry, something went wrong.";
+        errorMessage.className = "bot-message";
+        messages.appendChild(errorMessage);
+      }
+
+      input.value = "";
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    function calculateLoan() {
+      let salary = parseFloat(document.getElementById("salary").value);
+      let creditScore = parseFloat(document.getElementById("credit-score").value);
+      let loanAmount = parseFloat(document.getElementById("loan-amount").value);
+      let tenure = parseInt(document.getElementById("tenure").value);
+
+      let resultBox = document.getElementById("loan-result");
+      resultBox.innerHTML = "";
+
+      if (isNaN(salary) || isNaN(creditScore) || isNaN(loanAmount) || isNaN(tenure)) {
+        resultBox.innerHTML = "Please enter valid numbers in all fields.";
+        return;
+      }
+
+      let maxLoan = salary * 10;
+      let minCreditScore = 650;
+
+      if (creditScore < minCreditScore) {
+        resultBox.innerHTML = "Loan Denied: Credit score too low.";
+      } else if (loanAmount > maxLoan) {
+        resultBox.innerHTML = "Loan Denied: Requested amount exceeds your eligibility.";
+      } else {
+        let interestRate = creditScore >= 750 ? 5 : 8;
+        let totalPayable = loanAmount + (loanAmount * interestRate * tenure) / 100;
+        let monthlyPayment = totalPayable / (tenure * 12);
+
+        resultBox.innerHTML = `
+          Loan Approved!<br>
+          Interest Rate: ${interestRate}%<br>
+          Total Payable: $${totalPayable.toFixed(2)}<br>
+          Monthly Payment: $${monthlyPayment.toFixed(2)}
+        `;
+      }
+    }
+  </script>
+</body>
+</html>
