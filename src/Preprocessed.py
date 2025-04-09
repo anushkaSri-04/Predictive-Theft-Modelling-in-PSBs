@@ -16,41 +16,19 @@ from sklearn.metrics import f1_score
 
 filepath= "Datasets/FinalDataset.csv"
 dataset = pd.read_csv(filepath)
-#drop less featured attribute
-dataset=dataset.drop(columns=['REGION_RATING_CLIENT',
-    'NAME_HOUSING_TYPE',
-    'REGION_RATING_CLIENT_W_CITY',
-    'GENDER',
-    'FLAG_WORK_PHONE',
-    'REG_CITY_NOT_LIVE_CITY',
-    'REG_CITY_NOT_WORK_CITY',
-    'FLAG_EMAIL',
-    'NAME_CONTRACT_TYPE',
-    'REG_REGION_NOT_WORK_REGION',
-    'FLAG_EMP_PHONE',
-    'LIVE_REGION_NOT_WORK_REGION',
-    'REG_REGION_NOT_LIVE_REGION',
-    'FLAG_CONT_MOBILE',
-    'FLAG_MOBIL','NAME_EDUCATION_TYPE',
-    'CHILDREN',
-    'NAME_TYPE_SUITE',
-    'OWN_REALTY',
-    'NAME_FAMILY_STATUS',
-    'LIVE_CITY_NOT_WORK_CITY'])
-print("columns dropped")
 
-#target variable balance:
+# target variable balance:
 target_col = "TARGET"
 print("Target variable distribution: ")
 print(dataset[target_col].value_counts(normalize=True))
-sns.countplot(data=dataset , x=target_col)
-plt.title("Target Variable Distribution")
-plt.show
+# sns.countplot(data=dataset , x=target_col)
+# plt.title("Target Variable Distribution")
+# plt.show
 
 X=dataset.drop("TARGET", axis=1)
 y = dataset["TARGET"]
-print("Original X shape:", X.shape)
-print("Original y shape:", y.shape)
+# print("Original X shape:", X.shape)
+# print("Original y shape:", y.shape)
 
 
 X_train, X_test, y_train, y_test = train_test_split(
@@ -73,11 +51,11 @@ smote_df[target_col] = y_train_smote
 print("Target variable distribution after SMOTE:")
 print(smote_df[target_col].value_counts(normalize=True))
 
-sns.countplot(data=smote_df, x=target_col)
-plt.title("Target Variable Distribution After SMOTE")
-plt.show()
+# sns.countplot(data=smote_df, x=target_col)
+# plt.title("Target Variable Distribution After SMOTE")
+# plt.show()
 
-smote_df.to_csv("Datasets/SMOTE_Ready.csv", index=False)
+
 
 rf_model = RandomForestClassifier(random_state=42)
 rf_model.fit(X_train_smote, y_train_smote)
@@ -104,7 +82,7 @@ rf_model.fit(X_train_smote, y_train_smote)
 # plt.tight_layout()
 # plt.show()
 
-#FEATURE IMPORTSNCE
+# FEATURE IMPORTSNCE
 
 # importances = rf_model.feature_importances_
 # features = X_train_smote.columns
@@ -138,44 +116,141 @@ y_pred_rf = rf.predict(X_test)
 print("Final Random Forest Accuracy:", accuracy_score(y_test, y_pred_rf))
 print(classification_report(y_test, y_pred_rf))
 
-# #find best threshold: 
-# y_proba = rf.predict_proba(X_test)[:, 1]
 
-# # Try thresholds from 0.21 to 0.3 with step 0.01
-# thresholds = np.arange(0.21, 0.31, 0.01)
-# best_threshold = 0.21
-# best_f1 = 0
 
-# print("Thresholds and F1-scores for class 1:")
-# for thresh in thresholds:
-#     y_pred_thresh = (y_proba >= thresh).astype(int)
-#     f1 = f1_score(y_test, y_pred_thresh)
-#     print(f"Threshold: {thresh:.2f} => F1-score: {f1:.4f}")
-#     if f1 > best_f1:
-#         best_f1 = f1
-#         best_threshold = thresh
+# #XGBOOST
+# import xgboost as xgb
+# xgf = xgb.XGBClassifier(
+#     objective='binary:logistic',
+#     eval_metric='logloss',
+#     use_label_encoder=False,
+#     scale_pos_weight=1,
+#     random_state=42
+# )
+# xgf.fit(X_train_smote,y_train_smote)
+# y_pred_xgf=xgf.predict(X_test)
+# print("Accuracy of lightGBM: ",accuracy_score(y_test,y_pred_xgf))
+# print("Classification: ",classification_report(y_test,y_pred_xgf))
 
-# print(f"\nBest threshold: {best_threshold:.2f} with F1-score: {best_f1:.4f}")
 
-#after applying best threshold that is 0.25
-# y_pred_best = (y_proba >= 0.25).astype(int)
-# print("Classification Report with Best Threshold (0.25):")
-# print(classification_report(y_test, y_pred_best))
-# print("Confusion Matrix with Best Threshold (0.25):")
-# print(confusion_matrix(y_test, y_pred_best))
-
-# #logistic regression
-# log_reg = LogisticRegression(class_weight='balanced')
-# log_reg.fit(X_train, y_train)
-# y_pred_lr = log_reg.predict(X_test)
-# print("Logistic Regression Accuracy :", accuracy_score(y_test, y_pred_lr))
-# print(classification_report(y_test, y_pred_lr))
+#logistic regression
+log_reg = LogisticRegression(class_weight='balanced')
+log_reg.fit(X_train_smote, y_train_smote)
+y_pred_lr = log_reg.predict(X_test)
+print("Logistic Regression Accuracy :", accuracy_score(y_test, y_pred_lr))
+print(classification_report(y_test, y_pred_lr))
 
 # #Decision Tree
 # tree_clf = DecisionTreeClassifier(max_depth=4,class_weight='balanced',random_state=42)
-# tree_clf.fit(X_train, y_train)
+# tree_clf.fit(X_train_smote, y_train_smote)
 # y_pred_tree = tree_clf.predict(X_test)
 # print(" Decision Tree Results:")
 # print("Accuracy:", accuracy_score(y_test, y_pred_tree))
 # print(classification_report(y_test, y_pred_tree))
 
+# #ROC-AUC CURVE APPLY
+# from sklearn.metrics import roc_auc_score , roc_curve , auc
+# test_df = pd.DataFrame(
+#     {'True': y_test,
+#      'Logistic': y_pred_lr,
+#      'Random Forest' : y_pred_rf 
+#      }
+# )
+# #plotting
+# plt.figure(figsize=(7,5))
+# for model in ['Logistic', 'Random Forest']:
+#     fpr,tpr,_=roc_curve(test_df['True'], test_df[model])
+#     roc_auc = auc(fpr,tpr)
+#     plt.plot(fpr,tpr,label=f'{model} (AUC={roc_auc:2f})')
+# plt.xlabel('False Positive Rate')
+# plt.ylabel('True Positive Rate')
+# plt.title('ROC Curves for Two Models')
+# plt.legend()
+# plt.show() 
+
+#ENSEMBLE METHIDS
+# import warnings
+# from imblearn.ensemble import EasyEnsembleClassifier
+# warnings.filterwarnings('ignore')
+# eec = EasyEnsembleClassifier(random_state=42)
+# eec.fit(X_train,y_train)
+# y_pred_eec=eec.predict(X_test)
+# print("Classification Report: ", classification_report(y_test,y_pred_eec))
+# print("Accuracy: ",accuracy_score(y_test,y_pred_eec))
+
+
+
+
+
+
+
+#ENSEMBLE USING LR AND RF
+# from sklearn.ensemble import VotingClassifier
+# voting_clf=VotingClassifier(estimators=[('lr',log_reg),('rf',rf)],voting='soft')
+# voting_clf.fit(X_train_smote,y_train_smote)
+# y_pred_voting=voting_clf.predict(X_test)
+# print("Accuracy of hardsoft: ",accuracy_score(y_test,y_pred_voting))
+# print("Classification: ",classification_report(y_test,y_pred_voting))
+
+#Stack method:
+from sklearn.ensemble import StackingClassifier
+estimators = [
+    ('lr', log_reg),
+    ('rf', rf)
+    ]
+stacking_clf=StackingClassifier(estimators=estimators,final_estimator=log_reg)
+stacking_clf.fit(X_train_smote,y_train_smote)
+y_pred_stacking=stacking_clf.predict(X_test)
+print("Accuracy of stacking: ", accuracy_score(y_test,y_pred_stacking))
+print("Classification: ",classification_report(y_test,y_pred_stacking))
+
+# #applying 5cv , 10cv and so on
+# kf = KFold(n_splits=5,shuffle=True,random_state=42)
+# cross_val_results=cross_val_score(stacking_clf,X,y,cv=kf)
+# print("Cross-Validation Results (Accuracy):")
+# for i, result in enumerate(cross_val_results, 1):
+#     print(f"  Fold {i}: {result * 100:.2f}%")
+    
+# print(f'Mean Accuracy: {cross_val_results.mean()* 100:.2f}%')
+
+
+# #find best threshold: 
+y_proba = stacking_clf.predict_proba(X_test)[:, 1]
+
+# Try thresholds from 0.21 to 0.3 with step 0.01
+thresholds = np.arange(0.20, 0.31, 0.01)
+best_threshold = 0.20
+best_f1 = 0
+
+print("Thresholds and F1-scores for class 1:")
+for thresh in thresholds:
+    y_pred_thresh = (y_proba >= thresh).astype(int)
+    f1 = f1_score(y_test, y_pred_thresh)
+    print(f"Threshold: {thresh:.2f} => F1-score: {f1:.4f}")
+    if f1 > best_f1:
+        best_f1 = f1
+        best_threshold = thresh
+
+print(f"\nBest threshold: {best_threshold:.2f} with F1-score: {best_f1:.4f}")
+
+# after applying best threshold that is 0.25
+y_pred_best = (y_proba >= 0.25).astype(int)
+print("Classification Report with Best Threshold (0.25):")
+print(classification_report(y_test, y_pred_best))
+print("Confusion Matrix with Best Threshold (0.25):")
+print(confusion_matrix(y_test, y_pred_best))
+
+# #LightGBM
+# import lightgbm as lgb
+# lgf = lgb.LGBMClassifier(
+#     objective='binary',
+#     class_weight='balanced',
+#     n_estimators=1000,
+#     learning_rate=0.05,
+#     num_leaves=31,
+#     random_state=42
+# )
+# lgf.fit(X_train_smote,y_train_smote)
+# y_pred_lgf = lgf.predict(X_test)
+# print("Accuracy of lightGBM: ",accuracy_score(y_test,y_pred_lgf))
+# print("Classification: ",classification_report(y_test,y_pred_lgf))
