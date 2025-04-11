@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f4f4f4;
+            color: #333;
+        }
+
+        .navbar {
+            background-color: #004080;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-sizing: border-box;
+        }
+
+        .navbar img {
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        .navbar .title {
+            display: flex;
+            align-items: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .navbar .actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .navbar .services {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-right: 10px;
+            position: relative;
+        }
+
+        .navbar .services a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .navbar .services a:hover {
+            color: #ffcc00;
+        }
+
+        .separator {
+            color: white;
+            margin: 0 5px;
+        }
+
+        .contact-us-wrapper {
+            position: relative;
+        }
+
+        .contact-box {
+            display: none;
+            position: absolute;
+            top: 35px;
+            left: 0;
+            background: #ffffffee;
+            color: #000;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            min-width: 220px;
+            font-size: 14px;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+        }
+
+        .contact-us-wrapper:hover .contact-box {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .navbar .actions button {
+            background-color: #e60000;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            white-space: nowrap;
+        }
+
+        .navbar .actions button:hover {
+            background-color: #cc0000;
+        }
+
+        .container {
+            width: 60%;
+            margin: 120px auto 40px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        input,
+        select,
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            background-color: #004080;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: #003366;
+        }
+
+        #loan-result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e9ecef;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .footer {
+            background-color: #004080;
+            color: white;
+            text-align: center;
+            padding: 15px 10px;
+            margin-top: 50px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                width: 90%;
+            }
+
+            .navbar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .navbar .actions {
+                margin-top: 10px;
+                flex-direction: column;
+                width: 100%;
+                align-items: flex-start;
+            }
+
+            .navbar .actions button {
+                margin-top: 5px;
+                width: 100%;
+            }
+
+            .navbar .services {
+                margin-right: 0;
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .contact-box {
+                left: 0;
+                right: auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="navbar">
+        <div class="title">
+            <img src="img4.jpg" alt="Bank Logo" />
+            <img src="img1.jpg" alt="Azadi ka amrit mohotsav" />
+        </div>
+        <div class="actions">
+            <div class="services">
+                <span class="separator">|</span>
+                <a href="index.html">Home</a>
+                
+                <span class="separator">|</span>
+                <div class="contact-us-wrapper">
+                    Contact
+
+                    <div class="contact-box">
+                        <strong>Call Us:</strong><br>
+                        +91-1800-123-4567<br>
+                        +91-22-9876-5432<br><br>
+                        <strong>Email:</strong><br>
+                        support@unionbank.com
+
+                    </div>
+                </div>
+            </div>
+           
+            <button onclick="location.href='signup.html'">Sign Up</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Login</h2>
+
+        <label>Email id:</label>
+        <input type="text" id="example@gmail.com" />
+
+        <label>Password:</label>
+        <input type="text" id="enter password" />
+
+        
+
+        <button onclick="calculateLoan()">Login</button>
+
+        <div id="Login Successful"></div>
+
+        <a>Don't have an account?</a>
+        <a href="signup.html">Sign Up</a>
+    </div>
+
+    <div class="footer">
+        &copy; 2025 Union Bank of India. All rights reserved.
+    </div>
+
+</body>
+
+</html>

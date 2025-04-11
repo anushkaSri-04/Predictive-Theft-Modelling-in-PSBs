@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chatbot</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f4f4f4;
+            color: #333;
+        }
+
+        .navbar {
+            background-color: #004080;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-sizing: border-box;
+        }
+
+        .navbar img {
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        .navbar .title {
+            display: flex;
+            align-items: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .navbar .actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .navbar .services {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-right: 10px;
+            position: relative;
+        }
+
+        .navbar .services a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .navbar .services a:hover {
+            color: #ffcc00;
+        }
+
+        .separator {
+            color: white;
+            margin: 0 5px;
+        }
+
+        .contact-us-wrapper {
+            position: relative;
+        }
+
+        .contact-box {
+            display: none;
+            position: absolute;
+            top: 35px;
+            left: 0;
+            background: #ffffffee;
+            color: #000;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            min-width: 220px;
+            font-size: 14px;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+        }
+
+        .contact-us-wrapper:hover .contact-box {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .navbar .actions button {
+            background-color: #e60000;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            white-space: nowrap;
+        }
+
+        .navbar .actions button:hover {
+            background-color: #cc0000;
+        }
+
+        .chatbot-wrapper {
+            padding: 120px 20px 40px;
+            max-width: 800px;
+            margin: auto;
+        }
+
+        .container {
+            background: white;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        h3 {
+            text-align: center;
+            color: #0273c4;
+        }
+
+        #chatbot-messages {
+            border: 1px solid #ccc;
+            height: 250px;
+            overflow-y: scroll;
+            padding: 10px;
+            background: #fff;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .user-message {
+            background: #d1ecf1;
+            padding: 8px;
+            border-radius: 5px;
+            margin: 5px 0;
+            text-align: right;
+            font-weight: bold;
+        }
+
+        .bot-message {
+            background: #f1f1f1;
+            padding: 8px;
+            border-radius: 5px;
+            margin: 5px 0;
+            text-align: left;
+            font-weight: bold;
+        }
+
+        input,
+        button {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        button {
+            background-color: #28a745;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        .footer {
+            background-color: #004080;
+            color: white;
+            text-align: center;
+            padding: 15px 10px;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .navbar .actions {
+                margin-top: 10px;
+                flex-direction: column;
+                width: 100%;
+                align-items: flex-start;
+            }
+
+            .navbar .actions button {
+                margin-top: 5px;
+                width: 100%;
+            }
+
+            .navbar .services {
+                margin-right: 0;
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .contact-box {
+                left: 0;
+                right: auto;
+            }
+
+            .chatbot-wrapper {
+                padding: 120px 10px 40px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <div class="navbar">
+        <div class="title">
+            <img src="img4.jpg" alt="Bank Logo" />
+            <img src="img1.jpg" alt="Azadi ka amrit mohotsav" />
+        </div>
+        <div class="actions">
+            <div class="services">
+
+                
+                <a href="loan_calculator.html">Loan Predictor</a>
+                <span class="separator">|</span>
+                <a href="index.html">Home</a>
+                
+                <span class="separator">|</span>
+                <span class="contact-us-wrapper">
+                    Contact
+                    <div class="contact-box">
+                        <strong>Call Us:</strong><br>
+                        +91-1800-123-4567<br>
+                        +91-22-9876-5432<br><br>
+                        <strong>Email:</strong><br>
+                        support@unionbank.com
+                    </div>
+                </span>
+            </div>
+            <button onclick="location.href='login.html'">Login</button>
+            <button onclick="location.href='signup.html'">Sign Up</button>
+        </div>
+    </div>
+
+
+    <div class="chatbot-wrapper">
+        <div class="container">
+            <h3>Chatbot</h3>
+            <div id="chatbot-messages"></div>
+            <input type="text" id="chatbot-input" placeholder="Type a message..." onkeypress="handleKeyPress(event)" />
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+
+    <div class="footer">
+        &copy; 2025 Union Bank of India. All rights reserved.
+    </div>
+
+    <script>
+        const sessionId = "user-session-001";
+
+        window.onload = async function () {
+            const response = await fetch("http://127.0.0.1:5000/welcome");
+            const data = await response.json();
+
+            const messages = document.getElementById("chatbot-messages");
+            const welcomeMessage = document.createElement("div");
+            welcomeMessage.textContent = data.response;
+            welcomeMessage.className = "bot-message";
+            messages.appendChild(welcomeMessage);
+        };
+
+        function handleKeyPress(event) {
+            if (event.key === "Enter") {
+                sendMessage();
+            }
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById("chatbot-input");
+            const messages = document.getElementById("chatbot-messages");
+
+            const userText = input.value.trim();
+            if (userText === "") return;
+
+            const userMessage = document.createElement("div");
+            userMessage.textContent = "You: " + userText;
+            userMessage.className = "user-message";
+            messages.appendChild(userMessage);
+
+            try {
+                const response = await fetch("http://127.0.0.1:5000/chat", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ message: userText, session_id: sessionId }),
+                });
+
+                const data = await response.json();
+                const botMessage = document.createElement("div");
+                botMessage.className = "bot-message";
+
+                if (data.response.includes("<")) {
+                    botMessage.innerHTML = "Vyom: " + data.response;
+                } else {
+                    botMessage.textContent = "Vyom: " + (data.response || "Sorry, I couldn't process your request.");
+                }
+
+                messages.appendChild(botMessage);
+            } catch (error) {
+                const errorMessage = document.createElement("div");
+                errorMessage.textContent = "Vyom: Sorry, something went wrong.";
+                errorMessage.className = "bot-message";
+                messages.appendChild(errorMessage);
+            }
+
+            input.value = "";
+            messages.scrollTop = messages.scrollHeight;
+        }
+    </script>
+</body>
+
+</html>

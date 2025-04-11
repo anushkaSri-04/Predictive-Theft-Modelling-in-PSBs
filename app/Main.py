@@ -34,6 +34,17 @@ stacking_clf = StackingClassifier(estimators=estimators, final_estimator=log_reg
 # Wrap the trained stacking classifier
 final_model = PredictiveModel(model=stacking_clf, threshold=0.20)
 
+# # Save the model for Flask deployment
+# joblib.dump(final_model, 'models/Predictive_model.pkl')
+# print("Model saved as Predictive_model.pkl")
+
+
+import pickle
+
+
+
 # Save the model for Flask deployment
-joblib.dump(final_model, 'models/Predictive_model.pkl')
+with open('app/models/Predictive_model.pkl', 'wb') as f:
+    pickle.dump(final_model, f)
+
 print("Model saved as Predictive_model.pkl")
